@@ -76,14 +76,16 @@ public class MainActivity extends ActionBarActivity {
         ImageView image_view;
         switch (id) {
             case R.id.database_button:
-                // your code for button1 here
-                image_view = (ImageView) findViewById(R.id.imageview1);
-                image_view.setVisibility(View.VISIBLE);
+//                image_view = (ImageView) findViewById(R.id.imageview1);
+  //              image_view.setVisibility(View.VISIBLE);
                 break;
             case R.id.bluetooth_button:
-                // your code for button2 here
-                image_view = (ImageView) findViewById(R.id.imageview1);
-                image_view.setVisibility(View.VISIBLE);
+    //            image_view = (ImageView) findViewById(R.id.imageview1);
+      //          image_view.setVisibility(View.VISIBLE);
+                break;
+            case R.id.other_button:
+                break;
+            case R.id.other_button_2:
                 break;
             // even more buttons here
         }
