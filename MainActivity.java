@@ -1,5 +1,11 @@
 package com.example.dgzl.gis_glass_helper_app;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -13,10 +19,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import android.os.Build;
+
+import java.util.Set;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -76,12 +85,72 @@ public class MainActivity extends ActionBarActivity {
         ImageView image_view;
         switch (id) {
             case R.id.database_button:
-//                image_view = (ImageView) findViewById(R.id.imageview1);
-  //              image_view.setVisibility(View.VISIBLE);
                 break;
             case R.id.bluetooth_button:
-    //            image_view = (ImageView) findViewById(R.id.imageview1);
-      //          image_view.setVisibility(View.VISIBLE);
+
+                // blue adapter
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+                // checks device for bluetooth support
+                if (mBluetoothAdapter == null) {
+                    // does not support
+                } else {
+                    // does support
+                    image_view = (ImageView) findViewById(R.id.imageview1);
+                    image_view.setVisibility(View.VISIBLE);
+                }
+
+                /* broken
+                // checks if bluetooth is enabled
+                if (!mBluetoothAdapter.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+                */
+
+                final ArrayAdapter<String> mArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
+                        android.R.layout.simple_list_item_1);
+
+                // Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+                /*
+                // If there are paired devices
+                if (pairedDevices.size() > 0) {
+                    // Loop through paired devices
+                    for (BluetoothDevice device : pairedDevices) {
+                        // Add the name and address to an array adapter to show in a ListView
+                        //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    }
+                }
+                /**/
+
+                /***************** Device Discovery *******************************/
+
+                // Create a BroadcastReceiver for ACTION_FOUND
+                final BroadcastReceiver mReceiver;
+                mReceiver = new BroadcastReceiver() {
+                    public void onReceive(Context context, Intent intent) {
+                        String action = intent.getAction();
+                        // When discovery finds a device
+                        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                            // Get the BluetoothDevice object from the Intent
+                            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                            // Add the name and address to an array adapter to show in a ListView
+                           mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                        }
+                    }
+                };
+
+                // Register the BroadcastReceiver
+                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+
+
+
+
+
+
                 break;
             case R.id.other_button:
                 break;
