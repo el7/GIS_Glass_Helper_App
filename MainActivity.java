@@ -27,8 +27,12 @@ import android.os.Build;
 
 import java.util.Set;
 
+import static android.R.layout.simple_list_item_1;
+
 
 public class MainActivity extends ActionBarActivity {
+
+    private static final int REQUEST_ENABLE_BT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,44 +92,79 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.bluetooth_button:
 
-                // blue adapter
-                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                /* CREATE BLUETOOTH ADAPTER */
 
-                // checks device for bluetooth support
+                // the device's bluetooth radio adapter
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (mBluetoothAdapter == null) {
-                    // does not support
+                   // device does not support
+                    // handle gracefully. TODO
                 } else {
                     // does support
-                    image_view = (ImageView) findViewById(R.id.imageview1);
-                    image_view.setVisibility(View.VISIBLE);
-                }
+                    // show image for recognition
 
-                /* broken
+                    // all code in here? TODO
+                }
                 // checks if bluetooth is enabled
                 if (!mBluetoothAdapter.isEnabled()) {
+                    // ask to enable
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 }
-                */
 
+
+                /* DISCOVERY */
+                /* RFCOMM */
+
+                /* QUERY EXISTING PAIRS */
                 final ArrayAdapter<String> mArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
-                        android.R.layout.simple_list_item_1);
+                        android.R.layout.simple_list_item_1, android.R.id.text1);
 
-                // Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+//              listView.setAdapter(mArrayAdapter);
 
-                /*
+                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
                 // If there are paired devices
                 if (pairedDevices.size() > 0) {
                     // Loop through paired devices
                     for (BluetoothDevice device : pairedDevices) {
+                        // show image for recognition
+                        image_view = (ImageView) findViewById(R.id.imageview1);
+                        image_view.setVisibility(View.VISIBLE);
                         // Add the name and address to an array adapter to show in a ListView
-                        //mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                        mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                     }
                 }
+
+                final ArrayAdapter<BluetoothDevice> oArrayAdapter
+                        = new ArrayAdapter<BluetoothDevice>(getApplicationContext(),
+                        simple_list_item_1);
+
+                mBluetoothAdapter.startDiscovery();
+                BroadcastReceiver btReceiver = new BroadcastReceiver() {
+                    public void onReceive(Context context, Intent intent) {
+                        String action = intent.getAction();
+                        // When discovery finds a device
+                        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                            // Get the BluetoothDevice object from the Intent
+                            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                            // Add the name and address to an array adapter to show in a ListView
+                            StringBuilder b = new StringBuilder();
+                            b.append(device.getAddress());
+                            String s = b.toString();
+
+                            if (s.equals("00:06:66:44:E6:00")) {
+                                oArrayAdapter.add(device);
+                            }
+
+                        }
+                    }
+                };
+
+                /*
                 /**/
 
                 /***************** Device Discovery *******************************/
-
+/*
                 // Create a BroadcastReceiver for ACTION_FOUND
                 final BroadcastReceiver mReceiver;
                 mReceiver = new BroadcastReceiver() {
@@ -145,10 +184,7 @@ public class MainActivity extends ActionBarActivity {
                 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
 
-
-
-
-
+*/
 
 
                 break;
